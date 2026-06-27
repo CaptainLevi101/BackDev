@@ -93,3 +93,66 @@ it uses the **Orinoco** algo. it uses old and young generation segregations:
 it also do **memory compaction**.
 
 > **Extra Detail:** When objects in the old generation are deleted, it leaves fragmented "holes" in the memory. Compaction pushes all the remaining live objects tightly together to free up large, continuous blocks of memory.
+
+# 🖥️ Lecture 2: CPU, Processes, and Server Architecture
+
+## ⚙️ How Exactly a Computer Runs Software
+
+// whenever we try to run a software it get loaded as process
+// cpu def gotta run process
+
+- **1 CPU** -> can have many cores
+- **Single core** -> single computing unit
+
+// let's discuss how single core cpu works?
+// at an instance of time, a core can only execute a single process.
+And to execute the many tasks they can do **context switching** stuff.
+
+> **Extra Detail (Context Switching):** Context switching is when the CPU stops working on one process, saves its exact state in memory, and loads up another process. The CPU switches back and forth between processes so incredibly fast that it creates the illusion of doing everything at exactly the same time (multitasking).
+
+---
+
+## 🌐 Client-Server Architecture
+
+[Image of Client-Server Architecture]
+
+- **Client** -> a process running on a machine, that raises the request for a particular task.
+- **Server** -> process on a machine that is capable of accepting the request from the client, process it and send response back.
+  > **Extra Detail:** Clients and Servers usually talk to each other over the internet using standardized rules called protocols (like HTTP or TCP).
+
+---
+
+## 🛑 The Old Way: One Process Per Request
+
+// how the server gonna handle the requests?
+every req that we send to server acts as a single process.
+
+If we keep a single process for evry req...
+// but that will be very slow, for exanmple if 2 people liked a post.
+// earlier for every request server used to create new process, and if it is a single core cpu, it used to do context switching.
+
+// we could improve the hardware (add more cores/RAM) -> but when we create a complete new process, creating a brand new process is an **expensive task**.
+Not only storage, but also needs huge RAM!
+
+> **Extra Detail:** A full process is heavy because the Operating System (OS) has to allocate a brand new, isolated block of memory, assign new file descriptors, and set up strict security boundaries for it. It takes time and resources.
+
+**Conclusion:** So this approach in which we create a new process for every request is **NOT scalable**.
+
+---
+
+## 🧵 The Solution: Threads to the Rescue!
+
+how can we improve all this? here comes the concept of **threads** to the rescure.
+
+- **Threads** -> lightweight process.
+- **Why lightweight?** a process can spwan lot of light weight process called threads.
+
+_(Referencing your diagram: `![alt text](image-1.png)`)_
+
+if a process creates 3 threads then there will be 4 processes (execution units) running and how the cpu gonna handle it? By using the context switching.
+
+creation of threads is not a heavy process, as compare to the creation of a new process.
+
+**Why this is lightweight?** -> because threads share a lot of memory resources with the parent process.
+
+> **Extra Detail (Shared Memory):** Threads living inside the same parent process share the same Data, Code, and Heap memory. The only thing they keep strictly to themselves is their own small Call Stack (to keep track of their own functions) and Registers. This shared environment is why spinning up a thread takes almost zero overhead compared to booting up a whole new process!
